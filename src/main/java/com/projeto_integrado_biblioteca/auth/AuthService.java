@@ -50,9 +50,11 @@ public class AuthService {
 
             String token = tokenService.createToken(user);
 
-            return new AuthResponse(token, user.getRole().getName(), user.getEmail());
+            String message = "Login realizado com sucesso";
+
+            return new AuthResponse(token, user.getRole().getName(), user.getEmail(), message);
         } catch (BadCredentialsException e) {
-            throw new BadCredentialsException("Login ou senha incorretos");
+            throw new BadCredentialsException("E-mail ou senha incorretos");
         }
     }
 }
