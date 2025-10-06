@@ -11,7 +11,9 @@ public record AuthRegisterRequest(
         @NotBlank(message = "Insira o sobrenome")
         String lastName,
         @NotBlank(message = "Insira o email")
-        @Email(message = "Insira um email válido")
+        @Email(
+                message = "Insira um email válido",
+                regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
         String email,
         @NotBlank(message = "Insira a senha")
         @Size(min = 8, message = "A senha deve ter no minimo 8 carateres")
