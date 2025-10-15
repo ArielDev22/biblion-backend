@@ -1,10 +1,10 @@
-package com.projeto_integrado_biblioteca.auth;
+package com.projeto_integrado_biblioteca.domains.auth;
 
-import com.projeto_integrado_biblioteca.user.User;
-import com.projeto_integrado_biblioteca.user.UserRole;
-import com.projeto_integrado_biblioteca.exceptions.EmailAlreadyUsedException;
-import com.projeto_integrado_biblioteca.user.UserMapper;
-import com.projeto_integrado_biblioteca.user.UserRepository;
+import com.projeto_integrado_biblioteca.domains.user.User;
+import com.projeto_integrado_biblioteca.domains.user.UserRole;
+import com.projeto_integrado_biblioteca.exceptions.ConflictException;
+import com.projeto_integrado_biblioteca.domains.user.UserMapper;
+import com.projeto_integrado_biblioteca.domains.user.UserRepository;
 import com.projeto_integrado_biblioteca.security.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,7 +26,7 @@ public class AuthService {
     @Transactional
     public String registerUser(AuthRegisterRequest request) {
         if (userRepository.findByEmail(request.email()).isPresent()) {
-            throw new EmailAlreadyUsedException("Já existe uma conta com este email.");
+            throw new ConflictException("Já existe uma conta com este email.");
         }
 
         String hashPassword = encoder.encode(request.password());
@@ -52,7 +52,7 @@ public class AuthService {
 
             String message = "Login realizado com sucesso";
 
-            return new AuthResponse(token, user.getRole().getName(), user.getEmail(), message);
+            return new AuthResponse(token, message);
         } catch (BadCredentialsException e) {
             throw new BadCredentialsException("E-mail ou senha incorretos");
         }

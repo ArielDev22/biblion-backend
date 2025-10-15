@@ -1,4 +1,4 @@
-package com.projeto_integrado_biblioteca.auth;
+package com.projeto_integrado_biblioteca.domains.auth;
 
 import jakarta.validation.constraints.NotBlank;
 
