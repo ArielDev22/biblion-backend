@@ -1,4 +1,4 @@
-package com.projeto_integrado_biblioteca.security;
+package com.projeto_integrado_biblioteca.domains.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;

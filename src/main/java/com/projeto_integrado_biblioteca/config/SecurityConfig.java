@@ -1,6 +1,6 @@
 package com.projeto_integrado_biblioteca.config;
 
-import com.projeto_integrado_biblioteca.security.SecurityFilter;
+import com.projeto_integrado_biblioteca.domains.security.SecurityFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

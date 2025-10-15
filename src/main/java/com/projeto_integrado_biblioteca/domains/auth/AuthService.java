@@ -5,7 +5,7 @@ import com.projeto_integrado_biblioteca.domains.user.UserRole;
 import com.projeto_integrado_biblioteca.exceptions.ConflictException;
 import com.projeto_integrado_biblioteca.domains.user.UserMapper;
 import com.projeto_integrado_biblioteca.domains.user.UserRepository;
-import com.projeto_integrado_biblioteca.security.TokenService;
+import com.projeto_integrado_biblioteca.domains.security.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;

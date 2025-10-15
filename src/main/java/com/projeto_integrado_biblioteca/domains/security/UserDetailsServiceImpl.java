@@ -1,4 +1,4 @@
-package com.projeto_integrado_biblioteca.security;
+package com.projeto_integrado_biblioteca.domains.security;
 
 import com.projeto_integrado_biblioteca.domains.user.UserRepository;
 import lombok.RequiredArgsConstructor;
