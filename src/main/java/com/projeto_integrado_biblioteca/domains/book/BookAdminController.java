@@ -24,6 +24,7 @@ public class BookAdminController {
         return ResponseEntity.status(HttpStatus.CREATED).body(bookService.createBook(request));
     }
 
+    @GetMapping
     public ResponseEntity<List<BookResponse>> listBooks() {
         return ResponseEntity.ok(bookService.listBooks());
     }
