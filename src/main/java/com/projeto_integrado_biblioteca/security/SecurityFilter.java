@@ -1,5 +1,6 @@
 package com.projeto_integrado_biblioteca.security;
 
+import com.projeto_integrado_biblioteca.exceptions.InvalidRequestException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,7 +32,7 @@ public class SecurityFilter extends OncePerRequestFilter {
                 var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } else {
-                throw new RuntimeException("Token inválido");
+                throw new InvalidRequestException("Token inválido: " + token);
             }
         }
         filterChain.doFilter(request, response);
