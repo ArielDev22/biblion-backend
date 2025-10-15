@@ -5,18 +5,17 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.projeto_integrado_biblioteca.user.User;
+import com.projeto_integrado_biblioteca.domains.user.User;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,13 +29,13 @@ public class TokenService {
     private Algorithm algorithm = null;
 
     @PostConstruct
-    protected void init() throws UnsupportedEncodingException {
+    protected void init() {
         algorithm = Algorithm.HMAC256(secret.getBytes(StandardCharsets.UTF_8));
     }
 
     public String createToken(User user) {
         try {
-            Instant issueAt = LocalDateTime.now().toInstant(ZoneOffset.of("-03:00"));
+            Instant issueAt = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).toInstant();
             Instant expiresAt = issueAt.plus(Duration.ofMinutes(60));
             String scopes = user
                     .getAuthorities()
