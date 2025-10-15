@@ -1,4 +1,4 @@
-package com.projeto_integrado_biblioteca.user;
+package com.projeto_integrado_biblioteca.domains.user;
 
 import jakarta.persistence.*;
 import lombok.*;

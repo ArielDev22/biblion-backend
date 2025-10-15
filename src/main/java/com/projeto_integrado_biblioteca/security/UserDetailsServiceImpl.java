@@ -1,6 +1,6 @@
 package com.projeto_integrado_biblioteca.security;
 
-import com.projeto_integrado_biblioteca.user.UserRepository;
+import com.projeto_integrado_biblioteca.domains.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

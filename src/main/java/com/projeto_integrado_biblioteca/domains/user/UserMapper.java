@@ -1,6 +1,6 @@
-package com.projeto_integrado_biblioteca.user;
+package com.projeto_integrado_biblioteca.domains.user;
 
-import com.projeto_integrado_biblioteca.auth.AuthRegisterRequest;
+import com.projeto_integrado_biblioteca.domains.auth.AuthRegisterRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
