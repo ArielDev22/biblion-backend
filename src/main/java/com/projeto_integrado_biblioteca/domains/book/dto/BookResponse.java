@@ -9,8 +9,8 @@ public record BookResponse(
         String description,
         String type,
         String coverPath,
-        String pdfPath,
-        Double fileSize,
+        String pdfKey,
+        Long fileSize,
         Integer copiesAvailable,
         Integer copiesOnLoan
 ) {

@@ -6,8 +6,8 @@ import org.mapstruct.*;
 
 @Mapper(componentModel = "spring", uses = GenreMapper.class)
 public interface BookMapper {
-    @Mapping(target = "bookId", ignore = true)
-    @Mapping(target = "pdfPath", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "pdfKey", ignore = true)
     @Mapping(target = "coverPath", ignore = true)
     @Mapping(target = "fileSize", ignore = true)
     @Mapping(target = "copiesOnLoan", ignore = true)
@@ -19,12 +19,9 @@ public interface BookMapper {
     @Mapping(target = "genres", ignore = true)
     void updateBookFromRequest(BookUpdateRequest request, @MappingTarget Book book);
 
-    @Mapping(target = "id", source = "bookId")
     BookResponse bookToBookResponse(Book book);
 
-    @Mapping(target = "id", source = "bookId")
     BookPreviewResponse bookToBookPreview(Book book);
 
-    @Mapping(target = "id", source = "bookId")
     BookDetailsResponse bookToBookDetails(Book book);
 }

@@ -6,9 +6,11 @@ import com.projeto_integrado_biblioteca.domains.book.dto.BookUpdateRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -19,9 +21,13 @@ import java.util.List;
 public class BookAdminController {
     private final BookService bookService;
 
-    @PostMapping
-    public ResponseEntity<BookResponse> create(@RequestBody @Valid BookCreateRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(bookService.createBook(request));
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<BookResponse> create(
+            @RequestPart("data") @Valid BookCreateRequest request,
+            @RequestPart("pdf") MultipartFile pdf,
+            @RequestPart("image") MultipartFile image
+    ) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(bookService.createBook(request, pdf, image));
     }
 
     @GetMapping

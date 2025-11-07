@@ -21,8 +21,7 @@ import java.util.Set;
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "book_id")
-    private Long bookId;
+    private Long id;
 
     @Column(unique = true, nullable = false, length = 13)
     private String isbn;
@@ -51,11 +50,11 @@ public class Book {
     @Column(name = "cover_path", nullable = false)
     private String coverPath;
 
-    @Column(name = "pdf_path")
-    private String pdfPath;
+    @Column(name = "pdf_key")
+    private String pdfKey;
 
     @Column(name = "file_size")
-    private Double fileSize;
+    private Long fileSize;
 
     @Column(name = "copies_available")
     private Integer copiesAvailable;

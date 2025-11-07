@@ -1,6 +1,7 @@
 package com.projeto_integrado_biblioteca.domains.book;
 
 import com.projeto_integrado_biblioteca.domains.book.dto.*;
+import com.projeto_integrado_biblioteca.domains.book.storage.StorageService;
 import com.projeto_integrado_biblioteca.domains.genre.Genre;
 import com.projeto_integrado_biblioteca.domains.genre.GenreService;
 import com.projeto_integrado_biblioteca.exceptions.ConflictException;
@@ -9,6 +10,7 @@ import com.projeto_integrado_biblioteca.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Set;
@@ -20,9 +22,10 @@ public class BookService {
     private final BookRepository bookRepository;
     private final GenreService genreService;
     private final BookMapper bookMapper;
+    private final StorageService storageService;
 
     @Transactional
-    public BookResponse createBook(BookCreateRequest request) {
+    public BookResponse createBook(BookCreateRequest request, MultipartFile pdf, MultipartFile image) {
         if (bookRepository.findByTitle(request.title()).isPresent() || bookRepository.findByIsbn(request.isbn()).isPresent()) {
             throw new ConflictException(
                     "O livro com titulo: " + request.title() + "; ou com a ISBN: " + request.isbn() + "; já está registrado"
@@ -40,10 +43,15 @@ public class BookService {
                 .map(genreService::findByName)
                 .collect(Collectors.toSet());
 
+        String pdfKey = storageService.uploadPdf(pdf);
+        String imageKey = storageService.uploadImage(image);
+
         Book book = bookMapper.createRequestToBook(request);
+        book.setPdfKey(pdfKey);
+        book.setCoverPath(imageKey);
+        book.setFileSize(pdf.getSize());
         book.setCopiesAvailable((bt.equals(BookType.LOAN)) ? request.copiesAvailable() : 0);
         book.setCopiesOnLoan(0);
-        book.setCoverPath("none");
         book.setGenres(genres);
         book.setType(bt);
 
@@ -94,6 +102,12 @@ public class BookService {
         );
 
         return bookMapper.bookToBookDetails(book);
+    }
+
+    public Book getBookById(Long id) {
+        return bookRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Livro não encontrado com o id: " + id)
+        );
     }
 
     @Transactional
