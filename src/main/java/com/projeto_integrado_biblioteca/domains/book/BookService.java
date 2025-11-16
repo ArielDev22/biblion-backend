@@ -1,7 +1,7 @@
 package com.projeto_integrado_biblioteca.domains.book;
 
 import com.projeto_integrado_biblioteca.domains.book.dto.*;
-import com.projeto_integrado_biblioteca.domains.book.storage.StorageService;
+import com.projeto_integrado_biblioteca.domains.storage.StorageService;
 import com.projeto_integrado_biblioteca.domains.genre.Genre;
 import com.projeto_integrado_biblioteca.domains.genre.GenreService;
 import com.projeto_integrado_biblioteca.exceptions.ConflictException;
@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -19,13 +20,14 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class BookService {
+
     private final BookRepository bookRepository;
     private final GenreService genreService;
     private final BookMapper bookMapper;
     private final StorageService storageService;
 
     @Transactional
-    public BookResponse createBook(BookCreateRequest request, MultipartFile pdf, MultipartFile image) {
+    public BookAdminDashboardResponse createBook(BookCreateRequest request, MultipartFile pdf, MultipartFile image) {
         if (bookRepository.findByTitle(request.title()).isPresent() || bookRepository.findByIsbn(request.isbn()).isPresent()) {
             throw new ConflictException(
                     "O livro com titulo: " + request.title() + "; ou com a ISBN: " + request.isbn() + "; já está registrado"
@@ -47,61 +49,43 @@ public class BookService {
         String imageKey = storageService.uploadImage(image);
 
         Book book = bookMapper.createRequestToBook(request);
-        book.setPdfKey(pdfKey);
-        book.setCoverPath(imageKey);
-        book.setFileSize(pdf.getSize());
+        book.setImageKey(imageKey);
         book.setCopiesAvailable((bt.equals(BookType.LOAN)) ? request.copiesAvailable() : 0);
         book.setCopiesOnLoan(0);
         book.setGenres(genres);
         book.setType(bt);
+        book.setPdfFile(new BookPdfFile(null, generateFileName(request.title()), pdfKey, pdf.getSize(), null));
 
         Book savedBook = bookRepository.save(book);
 
-        return bookMapper.bookToBookResponse(savedBook);
-    }
-
-    @Transactional
-    public BookResponse updateBook(Long id, BookUpdateRequest request) {
-        Book bookToUpdate = bookRepository.findByIdWithGenres(id).orElseThrow(() -> new IllegalArgumentException("Livro não encontrado"));
-
-        bookMapper.updateBookFromRequest(request, bookToUpdate);
-
-        if (request.genres() != null && !request.genres().isEmpty()) {
-            Set<Genre> newGenres = request.genres()
-                    .stream()
-                    .map(genreService::findByName)
-                    .collect(Collectors.toSet());
-            bookToUpdate.setGenres(newGenres);
-        }
-
-        return bookMapper.bookToBookResponse(bookToUpdate);
+        return bookMapper.toAdminDashboardResponse(savedBook);
     }
 
     @Transactional(readOnly = true)
-    public List<BookResponse> listBooks() {
+    public List<BookAdminDashboardResponse> getBooksForAdminDashboard() {
         return bookRepository
                 .findAll()
                 .stream()
-                .map(bookMapper::bookToBookResponse)
+                .map(bookMapper::toAdminDashboardResponse)
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public List<BookPreviewResponse> listBookPreviews() {
+    public List<BookUserHomeResponse> getBooksForUserHome() {
         return bookRepository
                 .findAll()
                 .stream()
-                .map(bookMapper::bookToBookPreview)
+                .map(bookMapper::toBookUserHomeResponse)
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public BookDetailsResponse getDetails(Long id) {
+    public BookDetailsResponse getBookDetails(Long id) {
         Book book = bookRepository.findByIdWithGenres(id).orElseThrow(
                 () -> new ResourceNotFoundException("O livro não encontrado com id: " + id)
         );
 
-        return bookMapper.bookToBookDetails(book);
+        return bookMapper.toBookDetails(book);
     }
 
     public Book getBookById(Long id) {
@@ -111,16 +95,68 @@ public class BookService {
     }
 
     @Transactional
-    public void deleteBook(Long id) {
-        Book book = bookRepository.findByIdWithGenres(id).orElseThrow(
-                () -> new ResourceNotFoundException("O livro não encontrado com id: " + id)
-        );
+    public BookAdminDashboardResponse updateBook(
+            Long id,
+            BookUpdateRequest request,
+            MultipartFile pdf,
+            MultipartFile image
+    ) {
+        Book bookToUpdate = getBookById(id);
+        bookMapper.updateBookFromRequest(request, bookToUpdate);
 
-        for (Genre g : book.getGenres()) {
-            g.getBooks().remove(book);
+        if (!pdf.isEmpty()) {
+            changePdf(bookToUpdate, pdf);
         }
-        book.getGenres().clear();
+
+        if (!image.isEmpty()) {
+            changeImage(bookToUpdate, image);
+        }
+
+        if (request.genres() != null) {
+            bookToUpdate.setGenres(updateGenres(request.genres()));
+        }
+
+        bookToUpdate.addCopies(request.copiesToAdd());
+
+        bookRepository.save(bookToUpdate);
+
+        return bookMapper.toAdminDashboardResponse(bookToUpdate);
+    }
+
+    @Transactional
+    public void deleteBook(Long id) {
+        Book book = getBookById(id);
+
+        storageService.deletePdf(book.getPdfFile().getPdfKey());
+        storageService.deleteImage(book.getImageKey());
 
         bookRepository.delete(book);
+    }
+
+    private void changeImage(Book book, MultipartFile image) {
+        storageService.deleteImage(book.getImageKey());
+        book.setImageKey(storageService.uploadImage(image));
+    }
+
+    private void changePdf(Book book, MultipartFile pdf) {
+        storageService.deletePdf(book.getPdfFile().getPdfKey());
+
+        book.getPdfFile().setPdfKey((storageService.uploadPdf(pdf)));
+        book.getPdfFile().setSize(pdf.getSize());
+    }
+
+    private Set<Genre> updateGenres(List<String> genres) {
+        if (genres.isEmpty()) {
+            return Collections.emptySet();
+        }
+
+        return genres
+                .stream()
+                .map(genreService::findByName)
+                .collect(Collectors.toSet());
+    }
+
+    private String generateFileName(String title) {
+        return title.replace(" ", "_").toLowerCase().concat(".pdf");
     }
 }

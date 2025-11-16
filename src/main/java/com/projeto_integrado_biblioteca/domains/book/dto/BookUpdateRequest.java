@@ -17,13 +17,9 @@ public record BookUpdateRequest(
         @NotNull
         @PositiveOrZero
         Integer year,
-        @NotBlank
-        String coverPath,
-        @NotBlank
-        String pdfPath,
         @NotNull
         @PositiveOrZero
-        Integer copiesAvailable,
+        Integer copiesToAdd,
         @NotEmpty
         List<String> genres
 ) {

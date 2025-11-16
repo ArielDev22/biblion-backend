@@ -7,9 +7,7 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring", uses = GenreMapper.class)
 public interface BookMapper {
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "pdfKey", ignore = true)
-    @Mapping(target = "coverPath", ignore = true)
-    @Mapping(target = "fileSize", ignore = true)
+    @Mapping(target = "imageKey", ignore = true)
     @Mapping(target = "copiesOnLoan", ignore = true)
     @Mapping(target = "genres", ignore = true)
     @Mapping(target = "type", ignore = true)
@@ -17,11 +15,14 @@ public interface BookMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "genres", ignore = true)
+    @Mapping(target = "id", ignore = true)
     void updateBookFromRequest(BookUpdateRequest request, @MappingTarget Book book);
 
-    BookResponse bookToBookResponse(Book book);
+    @Mapping(target = "pdfKey", source = "pdfFile.pdfKey")
+    @Mapping(target = "pdfSize", source = "pdfFile.size")
+    BookAdminDashboardResponse toAdminDashboardResponse(Book book);
 
-    BookPreviewResponse bookToBookPreview(Book book);
+    BookUserHomeResponse toBookUserHomeResponse(Book book);
 
-    BookDetailsResponse bookToBookDetails(Book book);
+    BookDetailsResponse toBookDetails(Book book);
 }

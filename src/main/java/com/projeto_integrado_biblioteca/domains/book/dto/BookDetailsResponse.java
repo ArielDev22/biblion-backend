@@ -13,7 +13,6 @@ public record BookDetailsResponse(
         String description,
         Integer year,
         String coverPath,
-        String pdfPath,
         Double fileSize,
         BookType type,
         Integer copiesAvailable,

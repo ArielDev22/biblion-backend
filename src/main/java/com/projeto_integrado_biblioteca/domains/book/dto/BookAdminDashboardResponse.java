@@ -1,6 +1,6 @@
 package com.projeto_integrado_biblioteca.domains.book.dto;
 
-public record BookResponse(
+public record BookAdminDashboardResponse(
         Long id,
         String title,
         String isbn,
@@ -8,9 +8,9 @@ public record BookResponse(
         Integer year,
         String description,
         String type,
-        String coverPath,
+        String imageKey,
         String pdfKey,
-        Long fileSize,
+        Long pdfSize,
         Integer copiesAvailable,
         Integer copiesOnLoan
 ) {

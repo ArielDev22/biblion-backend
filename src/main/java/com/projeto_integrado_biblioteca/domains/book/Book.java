@@ -13,7 +13,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(of = "bookId")
+@EqualsAndHashCode(of = "id")
 @NamedEntityGraph(
         name = "Book.withGenres",
         attributeNodes = @NamedAttributeNode("genres")
@@ -47,18 +47,24 @@ public class Book {
     )
     private Set<Genre> genres = new HashSet<>();
 
-    @Column(name = "cover_path", nullable = false)
-    private String coverPath;
+    @Column(name = "image_key", nullable = false)
+    private String imageKey;
 
-    @Column(name = "pdf_key")
-    private String pdfKey;
-
-    @Column(name = "file_size")
-    private Long fileSize;
+    @OneToOne(cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "tb_books_pdfs",
+            joinColumns = {@JoinColumn(name = "book_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "pdf_id", referencedColumnName = "id")}
+    )
+    private BookPdfFile pdfFile;
 
     @Column(name = "copies_available")
     private Integer copiesAvailable;
 
     @Column(name = "copies_on_loan")
     private Integer copiesOnLoan;
+
+    public void addCopies(int quantity) {
+        this.copiesAvailable += quantity;
+    }
 }
