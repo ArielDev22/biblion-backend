@@ -7,7 +7,6 @@ import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @RestController
 @RequestMapping("/downloads")
@@ -23,12 +23,13 @@ import java.nio.charset.StandardCharsets;
 public class DownloadController {
     private final DownloadService downloadService;
 
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "/{bookId}")
     //@PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
-    public ResponseEntity<Resource> download(
-            @PathVariable Long id
+    public ResponseEntity<Resource> downloadPdf(
+            @PathVariable Long bookId,
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
-        DownloadableFile downloadableFile = downloadService.download(id);
+        DownloadableFile downloadableFile = downloadService.downloadPdf(bookId, userDetails);
 
 
         InputStreamResource resource = new InputStreamResource(downloadableFile.getInputStream());
@@ -45,5 +46,10 @@ public class DownloadController {
         headers.setContentLength(downloadableFile.getContentLength());
 
         return ResponseEntity.ok().headers(headers).body(resource);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<DownloadHistoricResponse>> getUserHistoric(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(downloadService.getUserHistoric(userDetails));
     }
 }
