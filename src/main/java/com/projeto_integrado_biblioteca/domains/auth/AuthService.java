@@ -1,5 +1,9 @@
 package com.projeto_integrado_biblioteca.domains.auth;
 
+import com.projeto_integrado_biblioteca.domains.auth.dtos.AuthLoginRequest;
+import com.projeto_integrado_biblioteca.domains.auth.dtos.AuthRegisterRequest;
+import com.projeto_integrado_biblioteca.domains.auth.dtos.AuthResponse;
+import com.projeto_integrado_biblioteca.domains.auth.dtos.AuthUserData;
 import com.projeto_integrado_biblioteca.domains.user.User;
 import com.projeto_integrado_biblioteca.domains.user.UserRole;
 import com.projeto_integrado_biblioteca.exceptions.ConflictException;
@@ -17,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+    private static final String AUTH_SUCCESS_MESSAGE = "Login realizado com sucesso";
+
     private final TokenService tokenService;
     private final PasswordEncoder encoder;
     private final UserRepository userRepository;
@@ -50,11 +56,24 @@ public class AuthService {
 
             String token = tokenService.createToken(user);
 
-            String message = "Login realizado com sucesso";
-
-            return new AuthResponse(token, message);
+            return buildAuthResponse(user, token);
         } catch (BadCredentialsException e) {
             throw new BadCredentialsException("E-mail ou senha incorretos");
         }
+    }
+
+    private AuthResponse buildAuthResponse(User user, String token) {
+        String fullName = user.getFirstName() + " " + user.getLastName();
+
+        return new AuthResponse(
+                token,
+                AUTH_SUCCESS_MESSAGE,
+                new AuthUserData(
+                        user.getId().toString(),
+                        fullName,
+                        user.getEmail(),
+                        user.getRole().name()
+                )
+        );
     }
 }

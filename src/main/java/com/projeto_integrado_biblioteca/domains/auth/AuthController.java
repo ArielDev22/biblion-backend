@@ -1,5 +1,8 @@
 package com.projeto_integrado_biblioteca.domains.auth;
 
+import com.projeto_integrado_biblioteca.domains.auth.dtos.AuthLoginRequest;
+import com.projeto_integrado_biblioteca.domains.auth.dtos.AuthRegisterRequest;
+import com.projeto_integrado_biblioteca.domains.auth.dtos.AuthResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,6 +25,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody @Valid AuthLoginRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(authService.authenticateUser(request));
+        return ResponseEntity.ok(authService.authenticateUser(request));
     }
 }
