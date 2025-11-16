@@ -8,10 +8,9 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface GenreMapper {
 
-    @Mapping(target = "genreId", ignore = true)
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "books", ignore = true)
     Genre genreCreateRequestToGenre(GenreCreateRequest request);
 
-    @Mapping(target = "id", source = "genreId")
     GenreResponse genreToGenreResponse(Genre genre);
 }
