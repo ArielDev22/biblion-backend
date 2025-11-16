@@ -6,9 +6,6 @@ minio:
   bucket: docs
 
 spring:
-  application:
-    name: minio-demo
-
   servlet:
     multipart:
       max-file-size: 20MB
