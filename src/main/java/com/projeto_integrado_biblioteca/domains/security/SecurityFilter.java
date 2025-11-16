@@ -31,8 +31,6 @@ public class SecurityFilter extends OncePerRequestFilter {
 
                 var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-            } else {
-                throw new InvalidRequestException("Token inválido: " + token);
             }
         }
         filterChain.doFilter(request, response);
@@ -40,6 +38,8 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     private String recoverToken(HttpServletRequest request) {
         String header = request.getHeader("Authorization");
+
+        if (header != null && !header.startsWith("Bearer ")) throw new InvalidRequestException("Cabeçalho Authorization não suportado: " + header);
 
         if (header == null) return null;
         else return header.replace("Bearer ", "");

@@ -26,16 +26,16 @@ public class TokenService {
     @Value("${jwt.issuer}")
     private String issuer;
 
-    private Algorithm algorithm = null;
+    private Algorithm algorithm;
 
     @PostConstruct
-    protected void init() {
+    protected void ensureAlgorithm() {
         algorithm = Algorithm.HMAC256(secret.getBytes(StandardCharsets.UTF_8));
     }
 
     public String createToken(User user) {
         try {
-            Instant issueAt = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).toInstant();
+            Instant issueAt = getInstant();
             Instant expiresAt = issueAt.plus(Duration.ofMinutes(60));
             String scopes = user
                     .getAuthorities()
@@ -48,7 +48,7 @@ public class TokenService {
                     .withIssuer(issuer)
                     .withIssuedAt(issueAt)
                     .withExpiresAt(expiresAt)
-                    .withSubject(user.getUserId().toString())
+                    .withSubject(user.getId().toString())
                     .withClaim("email", user.getEmail())
                     .withClaim("scopes", scopes)
                     .sign(algorithm);
@@ -69,5 +69,9 @@ public class TokenService {
         } catch (JWTVerificationException e) {
             return null;
         }
+    }
+
+    private Instant getInstant() {
+        return ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")).toInstant();
     }
 }
