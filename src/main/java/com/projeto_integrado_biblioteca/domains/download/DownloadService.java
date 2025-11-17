@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -25,16 +24,22 @@ public class DownloadService {
 
 
     @Transactional
-    public DownloadableFile downloadPdf(Long bookId, UserDetails userDetails) {
+    public DownloadableFile registerDownloadAndReturnPdf(Long bookId, UserDetails userDetails) {
         User user = userService.getUserByEmail(userDetails.getUsername());
         Book book = bookService.getBookById(bookId);
 
-        DownloadableFile file = storageService.getPdf(book.getPdfFile().getPdfKey());
-        file.setFileName(book.getPdfFile().getFilename());
+        DownloadableFile file = storageService.getPdf(book.getPdfFile());
 
-        if (downloadRepository.findByBookIdAndUserId(bookId, user.getId()).isEmpty()) {
-            downloadRepository.save(new Download(null, LocalDate.now(), book, user));
-        }
+        var optDownload = downloadRepository.findByBookIdAndUserId(bookId, user.getId());
+
+        Download download = optDownload
+                .map(d -> {
+                    d.updateDownloadDate();
+                    return d;
+                })
+                .orElseGet(() -> new Download(book, user));
+
+        downloadRepository.save(download);
 
         return file;
     }
@@ -43,8 +48,7 @@ public class DownloadService {
     public List<DownloadHistoricResponse> getUserHistoric(UserDetails userDetails) {
         User user = userService.getUserByEmail(userDetails.getUsername());
 
-        return user
-                .getDownloads()
+        return downloadRepository.findAllByUserId(user.getId())
                 .stream()
                 .map(downloadMapper::toDownloadHistoric)
                 .toList();

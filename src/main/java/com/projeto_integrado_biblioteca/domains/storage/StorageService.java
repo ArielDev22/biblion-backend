@@ -1,6 +1,7 @@
 package com.projeto_integrado_biblioteca.domains.storage;
 
 import com.projeto_integrado_biblioteca.config.S3ConfigProps;
+import com.projeto_integrado_biblioteca.domains.book.BookPdfFile;
 import com.projeto_integrado_biblioteca.domains.download.DownloadableFile;
 import com.projeto_integrado_biblioteca.exceptions.StorageException;
 import jakarta.annotation.PostConstruct;
@@ -82,11 +83,11 @@ public class StorageService {
         return key;
     }
 
-    public DownloadableFile getPdf(String key) {
+    public DownloadableFile getPdf(BookPdfFile pdfFile) {
         GetObjectRequest objectRequest = GetObjectRequest
                 .builder()
                 .bucket(props.bucket())
-                .key(key)
+                .key(pdfFile.getPdfKey())
                 .build();
 
         try {
@@ -95,7 +96,7 @@ public class StorageService {
 
             return new DownloadableFile(
                     objectResponse,
-                    null,
+                    pdfFile.getFilename(),
                     response.contentType(),
                     response.contentLength()
             );

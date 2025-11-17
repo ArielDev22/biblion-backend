@@ -30,4 +30,14 @@ public class Download {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    public Download(Book book, User user) {
+        this.book = book;
+        this.user = user;
+        this.downloadedAt = LocalDate.now();
+    }
+
+    public void updateDownloadDate(){
+        this.setDownloadedAt(LocalDate.now());
+    }
 }
