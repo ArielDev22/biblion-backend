@@ -2,6 +2,7 @@ package com.projeto_integrado_biblioteca.domains.book;
 
 import com.projeto_integrado_biblioteca.domains.book.dto.*;
 import jakarta.validation.Valid;
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -43,6 +44,12 @@ public class BookController {
     public ResponseEntity<List<BookAdminDashboardResponse>> listBooks() {
         return ResponseEntity.ok(bookService.getBooksForAdminDashboard());
     }
+
+    @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<BookUserHomeResponse>> search(@PathParam("q") String q) {
+        return ResponseEntity.ok(bookService.search(q));
+    }
+
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ROLE_ADMIN')")

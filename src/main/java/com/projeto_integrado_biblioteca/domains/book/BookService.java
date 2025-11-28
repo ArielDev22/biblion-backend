@@ -42,7 +42,7 @@ public class BookService {
         Set<Genre> genres = request
                 .genres()
                 .stream()
-                .map(genreService::findByName)
+                .map(genreService::findGenreById)
                 .collect(Collectors.toSet());
 
         String pdfKey = storageService.uploadPdf(pdf);
@@ -54,7 +54,7 @@ public class BookService {
         book.setCopiesOnLoan(0);
         book.setGenres(genres);
         book.setType(bt);
-        book.setPdfFile(new BookPdfFile(null, generateFileName(request.title()), pdfKey, pdf.getSize(), null));
+        book.setPdfFile(new BookPdfFile(null, generateFilename(request.title()), pdfKey, pdf.getSize(), null));
 
         Book savedBook = bookRepository.save(book);
 
@@ -75,7 +75,7 @@ public class BookService {
         return bookRepository
                 .findAll()
                 .stream()
-                .map(bookMapper::toBookUserHomeResponse)
+                .map(b -> new BookUserHomeResponse(b.getId(), b.getTitle(), b.getAuthor(), storageService.getCoverURL(b.getImageKey())))
                 .toList();
     }
 
@@ -92,6 +92,17 @@ public class BookService {
         return bookRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Livro não encontrado com o id: " + id)
         );
+    }
+
+    @Transactional(readOnly = true)
+    public List<BookUserHomeResponse> search(String q) {
+        BookQueryParams params = new BookQueryParams(q);
+
+        return bookRepository
+                .findAll(BookSpec.findUsingParams(params))
+                .stream()
+                .map(b -> new BookUserHomeResponse(b.getId(), b.getTitle(), b.getAuthor(), storageService.getCoverURL(b.getImageKey())))
+                .toList();
     }
 
     @Transactional
@@ -156,7 +167,7 @@ public class BookService {
                 .collect(Collectors.toSet());
     }
 
-    private String generateFileName(String title) {
+    private String generateFilename(String title) {
         return title.replace(" ", "_").toLowerCase().concat(".pdf");
     }
 }

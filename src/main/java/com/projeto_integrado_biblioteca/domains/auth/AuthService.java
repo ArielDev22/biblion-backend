@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    private static final String AUTH_SUCCESS_MESSAGE = "Login realizado com sucesso";
 
     private final TokenService tokenService;
     private final PasswordEncoder encoder;
@@ -67,7 +66,6 @@ public class AuthService {
 
         return new AuthResponse(
                 token,
-                AUTH_SUCCESS_MESSAGE,
                 new AuthUserData(
                         user.getId().toString(),
                         fullName,

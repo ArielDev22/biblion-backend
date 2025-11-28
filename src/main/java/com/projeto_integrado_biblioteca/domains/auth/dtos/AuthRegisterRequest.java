@@ -16,7 +16,7 @@ public record AuthRegisterRequest(
                 regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
         String email,
         @NotBlank(message = "Insira a senha")
-        @Size(min = 8, message = "A senha deve ter no minimo 8 carateres")
+        @Size(min = 6, message = "A senha deve ter no minimo 6 caracteres")
         @Pattern(
                 regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).+$",
                 message = "A senha deve conter no mínimo uma letra minúscula, uma letra maiúscula e um número."

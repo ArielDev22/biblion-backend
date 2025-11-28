@@ -50,7 +50,7 @@ public class AdviceController {
         LOGGER.warn(LogMessageBuilder.build(status, message, request));
 
         ErrorResponse response = buildResponse(
-                e.getMessage(),
+                message,
                 status,
                 request.getRequestURI()
         );

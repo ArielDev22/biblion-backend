@@ -3,6 +3,7 @@ package com.projeto_integrado_biblioteca.domains.genre;
 import com.projeto_integrado_biblioteca.domains.genre.dtos.GenreCreateRequest;
 import com.projeto_integrado_biblioteca.domains.genre.dtos.GenreResponse;
 import com.projeto_integrado_biblioteca.exceptions.ConflictException;
+import com.projeto_integrado_biblioteca.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,5 +38,9 @@ public class GenreService {
     @Transactional(readOnly = true)
     public Genre findByName(String name) {
         return genreRepository.findByName(name).orElse(null);
+    }
+
+    public Genre findGenreById(Long id) {
+        return genreRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Genero não encontrado com o id: " + id));
     }
 }

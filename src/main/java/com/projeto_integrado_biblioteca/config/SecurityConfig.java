@@ -27,7 +27,8 @@ public class SecurityConfig {
     private static final String[] PERMIT_ENDPOINTS_LIST = {
             "/auth/**",
             "/books/home",
-            "/books/details"
+            "/books/details",
+            "/books/search"
     };
 
     @Bean

@@ -37,7 +37,7 @@ public class DownloadController {
 
 
         ContentDisposition disposition = ContentDisposition
-                .attachment()
+                .inline()
                 .filename(downloadableFile.getFileName(), StandardCharsets.UTF_8)
                 .build();
 

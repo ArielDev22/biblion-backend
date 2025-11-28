@@ -15,8 +15,13 @@ import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.time.Duration;
 import java.util.UUID;
 
 @Service
@@ -24,16 +29,19 @@ import java.util.UUID;
 public class StorageService {
     private static final Logger LOGGER = LoggerFactory.getLogger(StorageService.class);
 
-    private final S3Client s3;
+    private final Duration presignedExpiration = Duration.ofMinutes(60);
+
+    private final S3Presigner s3Presigner;
+    private final S3Client s3Client;
     private final S3ConfigProps props;
 
     @PostConstruct
     public void ensureBucket() {
         String bucket = props.bucket();
         try {
-            s3.headBucket(HeadBucketRequest.builder().bucket(bucket).build());
+            s3Client.headBucket(HeadBucketRequest.builder().bucket(bucket).build());
         } catch (S3Exception e) {
-            s3.headBucket(HeadBucketRequest.builder().bucket(bucket).build());
+            s3Client.headBucket(HeadBucketRequest.builder().bucket(bucket).build());
         }
     }
 
@@ -52,7 +60,7 @@ public class StorageService {
                 .build();
 
         try {
-            s3.putObject(putObjectRequest, RequestBody.fromBytes(pdf.getBytes()));
+            s3Client.putObject(putObjectRequest, RequestBody.fromBytes(pdf.getBytes()));
         } catch (IOException e) {
             throw new StorageException("Erro ao realizar o upload");
         }
@@ -75,7 +83,26 @@ public class StorageService {
                 .build();
 
         try {
-            s3.putObject(putObjectRequest, RequestBody.fromBytes(image.getBytes()));
+            s3Client.putObject(putObjectRequest, RequestBody.fromBytes(image.getBytes()));
+        } catch (IOException e) {
+            throw new StorageException("Erro ao realizar o upload");
+        }
+
+        return key;
+    }
+
+    public String uploadImageAsStream(InputStream image) {
+        String key = UUID.randomUUID() + ".jpg";
+
+        try {
+            s3Client.putObject(
+                    PutObjectRequest.builder()
+                            .bucket(props.bucket())
+                            .key(key)
+                            .contentType(MediaType.IMAGE_JPEG_VALUE)
+                            .build(),
+                    RequestBody.fromInputStream(image, image.available())
+            );
         } catch (IOException e) {
             throw new StorageException("Erro ao realizar o upload");
         }
@@ -91,7 +118,7 @@ public class StorageService {
                 .build();
 
         try {
-            ResponseInputStream<GetObjectResponse> objectResponse = s3.getObject(objectRequest);
+            ResponseInputStream<GetObjectResponse> objectResponse = s3Client.getObject(objectRequest);
             GetObjectResponse response = objectResponse.response();
 
             return new DownloadableFile(
@@ -101,7 +128,23 @@ public class StorageService {
                     response.contentLength()
             );
         } catch (S3Exception e) {
-            throw new RuntimeException(e);
+            throw new StorageException("Erro ao buscar o PDF");
+        }
+    }
+
+    public String getCoverURL(String key) {
+        try {
+            GetObjectPresignRequest objectPresignRequest = GetObjectPresignRequest
+                    .builder()
+                    .signatureDuration(presignedExpiration)
+                    .getObjectRequest(obj -> obj.bucket(props.bucket()).key(key))
+                    .build();
+
+            PresignedGetObjectRequest presignedRequest = s3Presigner.presignGetObject(objectPresignRequest);
+
+            return presignedRequest.url().toString();
+        } catch (S3Exception e) {
+            throw new StorageException("Erro ao buscar a URL");
         }
     }
 
@@ -111,7 +154,7 @@ public class StorageService {
                 .bucket(props.bucket())
                 .build();
         try {
-            s3.deleteObject(deleteObjectRequest);
+            s3Client.deleteObject(deleteObjectRequest);
 
             LOGGER.info(key + " foi deletada");
         } catch (S3Exception e) {
@@ -127,7 +170,7 @@ public class StorageService {
                 .build();
 
         try {
-            s3.deleteObject(deleteObjectRequest);
+            s3Client.deleteObject(deleteObjectRequest);
 
             LOGGER.info(key + " foi deletada");
         } catch (S3Exception e) {

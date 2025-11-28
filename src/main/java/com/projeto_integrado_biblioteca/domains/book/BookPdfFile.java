@@ -15,10 +15,10 @@ public class BookPdfFile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "file_name", nullable = false)
+    @Column(nullable = false)
     private String filename;
 
-    @Column(nullable = false)
+    @Column(name = "pdf_key", nullable = false)
     private String pdfKey;
 
     @Column(nullable = false)

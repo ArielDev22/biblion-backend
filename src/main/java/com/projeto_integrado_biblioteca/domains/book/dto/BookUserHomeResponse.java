@@ -4,7 +4,6 @@ public record BookUserHomeResponse(
         Long id,
         String title,
         String author,
-        String coverPath,
-        String description
+        String imageURL
 ) {
 }

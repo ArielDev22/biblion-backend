@@ -39,7 +39,7 @@ public class Book {
     @Column(nullable = false)
     private BookType type;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "tb_books_genres",
             joinColumns = @JoinColumn(name = "book_id"),
