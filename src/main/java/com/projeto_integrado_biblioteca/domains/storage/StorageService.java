@@ -3,6 +3,7 @@ package com.projeto_integrado_biblioteca.domains.storage;
 import com.projeto_integrado_biblioteca.config.S3ConfigProps;
 import com.projeto_integrado_biblioteca.domains.book.BookPdfFile;
 import com.projeto_integrado_biblioteca.domains.download.DownloadableFile;
+import com.projeto_integrado_biblioteca.exceptions.ResourceNotFoundException;
 import com.projeto_integrado_biblioteca.exceptions.StorageException;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -110,7 +111,7 @@ public class StorageService {
         return key;
     }
 
-    public DownloadableFile getPdf(BookPdfFile pdfFile) {
+    public DownloadableFile getPdfForDownload(BookPdfFile pdfFile) {
         GetObjectRequest objectRequest = GetObjectRequest
                 .builder()
                 .bucket(props.bucket())
@@ -129,6 +130,25 @@ public class StorageService {
             );
         } catch (S3Exception e) {
             throw new StorageException("Erro ao buscar o PDF");
+        }
+    }
+
+    public ResponseInputStream<GetObjectResponse> getPdf(String key) {
+        if (key.isBlank()) {
+            throw new ResourceNotFoundException("O PDF para este livro ainda não foi registrado.");
+        }
+
+        GetObjectRequest getObjectRequest = GetObjectRequest
+                .builder()
+                .bucket(props.bucket())
+                .key(key)
+                .build();
+
+        try {
+            return s3Client.getObject(getObjectRequest);
+        } catch (S3Exception e) {
+            LOGGER.error("Erro ao buscar o pdf: " + e.getMessage());
+            throw new StorageException("Falha ao buscar o pdf");
         }
     }
 

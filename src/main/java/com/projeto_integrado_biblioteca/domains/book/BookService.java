@@ -85,7 +85,10 @@ public class BookService {
                 () -> new ResourceNotFoundException("O livro não encontrado com id: " + id)
         );
 
-        return bookMapper.toBookDetails(book);
+        var bookDetails = bookMapper.toBookDetails(book);
+        bookDetails.setImageURL(storageService.getCoverURL(book.getImageKey()));
+
+        return bookDetails;
     }
 
     public Book getBookById(Long id) {
@@ -134,6 +137,26 @@ public class BookService {
         return bookMapper.toAdminDashboardResponse(bookToUpdate);
     }
 
+    public String updateBookPDF(Long id, MultipartFile pdf) {
+        var book = getBookById(id);
+
+        String response = "";
+
+        if (book.getPdfFile() != null) {
+            changePdf(book, pdf);
+            response = "PDF atualizado";
+        } else {
+            String key = storageService.uploadPdf(pdf);
+
+            book.setPdfFile(new BookPdfFile(null, generateFilename(book.getTitle()), key, pdf.getSize(), null));
+            response = "PDF carregado";
+        }
+
+        bookRepository.save(book);
+
+        return response;
+    }
+
     @Transactional
     public void deleteBook(Long id) {
         Book book = getBookById(id);
@@ -169,5 +192,18 @@ public class BookService {
 
     private String generateFilename(String title) {
         return title.replace(" ", "_").toLowerCase().concat(".pdf");
+    }
+
+    @Transactional(readOnly = true)
+    public BookReadPDFResponse getBookPdf(Long id) {
+        Book book = getBookById(id);
+
+        var inputStream = storageService.getPdf(book.getPdfFile().getPdfKey());
+
+        return new BookReadPDFResponse(inputStream, book.getPdfFile().getFilename(), book.getPdfFile().getSize());
+    }
+
+    public BookReadDetails getBookReadDetails(Long id) {
+        return bookMapper.toBookReadDetails(getBookById(id));
     }
 }

@@ -24,5 +24,8 @@ public interface BookMapper {
 
     BookUserHomeResponse toBookUserHomeResponse(Book book);
 
+    @Mapping(target = "pdfSize", source = "pdfFile.size")
     BookDetailsResponse toBookDetails(Book book);
+
+    BookReadDetails toBookReadDetails(Book book);
 }

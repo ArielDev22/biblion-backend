@@ -2,20 +2,21 @@ package com.projeto_integrado_biblioteca.domains.book.dto;
 
 import com.projeto_integrado_biblioteca.domains.book.BookType;
 import com.projeto_integrado_biblioteca.domains.genre.dtos.GenreResponse;
+import lombok.Data;
 
 import java.util.List;
 
-public record BookDetailsResponse(
-        Long id,
-        String title,
-        String isbn,
-        String author,
-        String description,
-        Integer year,
-        String coverPath,
-        Double fileSize,
-        BookType type,
-        Integer copiesAvailable,
-        List<GenreResponse> genres
-) {
+@Data
+public class BookDetailsResponse {
+    private Long id;
+    private String title;
+    private String isbn;
+    private String author;
+    private String description;
+    private Integer year;
+    private String imageURL;
+    private Long pdfSize;
+    private BookType type;
+    private Integer copiesAvailable;
+    private List<GenreResponse> genres;
 }

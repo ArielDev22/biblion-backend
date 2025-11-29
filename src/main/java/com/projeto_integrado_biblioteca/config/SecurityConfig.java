@@ -28,7 +28,9 @@ public class SecurityConfig {
             "/auth/**",
             "/books/home",
             "/books/details",
-            "/books/search"
+            "/books/search",
+            "/books/read/free/**",
+            "/books/details-read"
     };
 
     @Bean

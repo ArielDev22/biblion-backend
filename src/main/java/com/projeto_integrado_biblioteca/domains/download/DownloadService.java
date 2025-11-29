@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +31,7 @@ public class DownloadService {
         User user = userService.getUserByEmail(userDetails.getUsername());
         Book book = bookService.getBookById(bookId);
 
-        DownloadableFile file = storageService.getPdf(book.getPdfFile());
+        DownloadableFile file = storageService.getPdfForDownload(book.getPdfFile());
 
         var optDownload = downloadRepository.findByBookIdAndUserId(bookId, user.getId());
 
@@ -48,9 +51,22 @@ public class DownloadService {
     public List<DownloadHistoricResponse> getUserHistoric(UserDetails userDetails) {
         User user = userService.getUserByEmail(userDetails.getUsername());
 
-        return downloadRepository.findAllByUserId(user.getId())
+        Map<UUID, Download> userDownloads = downloadRepository.findAllByUserId(user.getId())
+                .stream()
+                .collect(Collectors.toMap(Download::getId, d -> d));
+
+
+        List<DownloadHistoricResponse> downloadHistoric = userDownloads
+                .values()
                 .stream()
                 .map(downloadMapper::toDownloadHistoric)
                 .toList();
+
+        for (DownloadHistoricResponse d : downloadHistoric) {
+            var download = userDownloads.get(d.getId());
+            d.setImageURL(storageService.getCoverURL(download.getBook().getImageKey()));
+        }
+
+        return downloadHistoric;
     }
 }
