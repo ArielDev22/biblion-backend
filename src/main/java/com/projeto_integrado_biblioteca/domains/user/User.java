@@ -1,6 +1,7 @@
 package com.projeto_integrado_biblioteca.domains.user;
 
 import com.projeto_integrado_biblioteca.domains.download.Download;
+import com.projeto_integrado_biblioteca.domains.session.Session;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -42,6 +43,9 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Download> downloads = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Session> sessions = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
