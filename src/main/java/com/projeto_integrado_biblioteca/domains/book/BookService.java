@@ -75,7 +75,7 @@ public class BookService {
         return bookRepository
                 .findAll()
                 .stream()
-                .map(b -> new BookUserHomeResponse(b.getId(), b.getTitle(), b.getAuthor(), storageService.getCoverURL(b.getImageKey())))
+                .map(b -> new BookUserHomeResponse(b.getId(), b.getTitle(), b.getAuthor(), getImageURL(b.getImageKey())))
                 .toList();
     }
 
@@ -86,7 +86,7 @@ public class BookService {
         );
 
         var bookDetails = bookMapper.toBookDetails(book);
-        bookDetails.setImageURL(storageService.getCoverURL(book.getImageKey()));
+        bookDetails.setImageURL(getImageURL(book.getImageKey()));
 
         return bookDetails;
     }
@@ -104,7 +104,7 @@ public class BookService {
         return bookRepository
                 .findAll(BookSpec.findUsingParams(params))
                 .stream()
-                .map(b -> new BookUserHomeResponse(b.getId(), b.getTitle(), b.getAuthor(), storageService.getCoverURL(b.getImageKey())))
+                .map(b -> new BookUserHomeResponse(b.getId(), b.getTitle(), b.getAuthor(), getImageURL(b.getImageKey())))
                 .toList();
     }
 
@@ -201,6 +201,10 @@ public class BookService {
         var inputStream = storageService.getPdf(book.getPdfFile().getPdfKey());
 
         return new BookReadPDFResponse(inputStream, book.getPdfFile().getFilename(), book.getPdfFile().getSize());
+    }
+
+    public String getImageURL(String key) {
+        return storageService.getCoverURL(key);
     }
 
     public BookReadDetails getBookReadDetails(Long id) {

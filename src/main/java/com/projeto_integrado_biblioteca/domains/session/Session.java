@@ -4,8 +4,6 @@ import com.projeto_integrado_biblioteca.domains.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
-
 @Entity
 @Table(name = "tb_sessions")
 @NoArgsConstructor
@@ -17,7 +15,8 @@ public class Session {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDate date;
+    @Enumerated(EnumType.STRING)
+    private SessionStatus status = SessionStatus.LENDO;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")

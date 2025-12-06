@@ -14,4 +14,10 @@ public class UserService {
                 () -> new ResourceNotFoundException("Usuário não encontrado com o email: " + email)
         );
     }
+
+    public User getUserById(Long id) {
+        return userRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Falha ao encontrar o usuário com o id: " + id)
+        );
+    }
 }
