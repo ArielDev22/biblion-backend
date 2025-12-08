@@ -17,6 +17,5 @@ public class BookDetailsResponse {
     private String imageURL;
     private Long pdfSize;
     private BookType type;
-    private Integer copiesAvailable;
     private List<GenreResponse> genres;
 }

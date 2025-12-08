@@ -40,7 +40,7 @@ public class BookController {
         return ResponseEntity.ok(bookService.getBookDetails(id));
     }
 
-    @GetMapping
+    @GetMapping("/admin")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<BookAdminDashboardResponse>> listBooks() {
         return ResponseEntity.ok(bookService.getBooksForAdminDashboard());

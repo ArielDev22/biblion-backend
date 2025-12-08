@@ -48,18 +48,18 @@ public class PopulateDBConfig {
                 String imagesPath = "/static/images/";
 
                 List<Book> books = List.of(
-                        new Book(null, "5647375698675", "1984", "George Orwell", null, null, BookType.FREE, Set.of(genreMap.get("Ficção")), null, null, 0, 0),
-                        new Book(null, "5647375698674", "A Revolução dos Bichos", "George Orwell", null, null, BookType.FREE, Set.of(genreMap.get("Ficção")), null, null, 0, 0),
-                        new Book(null, "5647375698671", "Admirável Mundo Novo", " Aldous Huxley", null, 1932, BookType.FREE, Set.of(genreMap.get("Ficção")), null, null, 0, 0),
-                        new Book(null, "5647375698672", "O Apanhador no Campo de Centeio", "J. D. Salinger", null, 1945, BookType.FREE, Set.of(genreMap.get("Ficção")), null, null, 0, 0),
-                        new Book(null, "5647375698670", "As Crônicas de Nárnia", "C. S. Lewis", null, null, BookType.FREE, Set.of(genreMap.get("Aventura"), genreMap.get("Fantasia")), null, null, 0, 0),
-                        new Book(null, "5647375698679", "A Jornada do Jovem Mago", "J. K. Rowling", null, null, BookType.FREE, Set.of(genreMap.get("Aventura"), genreMap.get("Fantasia")), null, null, 0, 0),
-                        new Book(null, "5647375698678", "Jane Eyre", "Charlotte Brontë", null, 1847, BookType.FREE, Set.of(genreMap.get("Romance")), null, null, 0, 0),
-                        new Book(null, "5647375698677", "O Senhor dos Anéis", "J. R. R. Tolkien", null, 1954, BookType.FREE, Set.of(genreMap.get("Aventura"), genreMap.get("Fantasia"), genreMap.get("Ação")), null, null, 0, 0),
-                        new Book(null, "5647375698676", "Orgulho e Preconceito", "Jane Austen", null, 1813, BookType.FREE, Set.of(genreMap.get("Romance"), genreMap.get("Ficção")), null, null, 0, 0),
-                        new Book(null, "5647375698688", "O Hobbit", "J. R. R. Tolkien", null, 1937, BookType.FREE, Set.of(genreMap.get("Aventura"), genreMap.get("Fantasia"), genreMap.get("Ação")), null, null, 0, 0),
-                        new Book(null, "5647375698684", "Duna", "Frank Herbert", null, 1965, BookType.FREE, Set.of(genreMap.get("Romance"), genreMap.get("Ficção")), null, null, 0, 0),
-                        new Book(null, "5647375698682", "O Sol Nasce Para Todos", "Harper Lee", null, 1960, BookType.FREE, Set.of(genreMap.get("Romance")), null, null, 0, 0)
+                        new Book(null, "5647375698675", "1984", "George Orwell", null, null, BookType.FREE, Set.of(genreMap.get("Ficção")), null, null),
+                        new Book(null, "5647375698674", "A Revolução dos Bichos", "George Orwell", null, null, BookType.FREE, Set.of(genreMap.get("Ficção")), null, null),
+                        new Book(null, "5647375698671", "Admirável Mundo Novo", " Aldous Huxley", null, 1932, BookType.FREE, Set.of(genreMap.get("Ficção")), null, null),
+                        new Book(null, "5647375698672", "O Apanhador no Campo de Centeio", "J. D. Salinger", null, 1945, BookType.FREE, Set.of(genreMap.get("Ficção")), null, null),
+                        new Book(null, "5647375698670", "As Crônicas de Nárnia", "C. S. Lewis", null, null, BookType.FREE, Set.of(genreMap.get("Aventura"), genreMap.get("Fantasia")), null, null),
+                        new Book(null, "5647375698679", "A Jornada do Jovem Mago", "J. K. Rowling", null, null, BookType.FREE, Set.of(genreMap.get("Aventura"), genreMap.get("Fantasia")), null, null),
+                        new Book(null, "5647375698678", "Jane Eyre", "Charlotte Brontë", null, 1847, BookType.FREE, Set.of(genreMap.get("Romance")), null, null),
+                        new Book(null, "5647375698677", "O Senhor dos Anéis", "J. R. R. Tolkien", null, 1954, BookType.FREE, Set.of(genreMap.get("Aventura"), genreMap.get("Fantasia"), genreMap.get("Ação")), null, null),
+                        new Book(null, "5647375698676", "Orgulho e Preconceito", "Jane Austen", null, 1813, BookType.FREE, Set.of(genreMap.get("Romance"), genreMap.get("Ficção")), null, null),
+                        new Book(null, "5647375698688", "O Hobbit", "J. R. R. Tolkien", null, 1937, BookType.FREE, Set.of(genreMap.get("Aventura"), genreMap.get("Fantasia"), genreMap.get("Ação")), null, null),
+                        new Book(null, "5647375698684", "Duna", "Frank Herbert", null, 1965, BookType.FREE, Set.of(genreMap.get("Romance"), genreMap.get("Ficção")), null, null),
+                        new Book(null, "5647375698682", "O Sol Nasce Para Todos", "Harper Lee", null, 1960, BookType.FREE, Set.of(genreMap.get("Romance")), null, null)
                 );
 
                 for (Book b : books) {

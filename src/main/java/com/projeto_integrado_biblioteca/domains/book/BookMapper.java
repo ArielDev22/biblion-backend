@@ -8,7 +8,6 @@ import org.mapstruct.*;
 public interface BookMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "imageKey", ignore = true)
-    @Mapping(target = "copiesOnLoan", ignore = true)
     @Mapping(target = "genres", ignore = true)
     @Mapping(target = "type", ignore = true)
     Book createRequestToBook(BookCreateRequest request);

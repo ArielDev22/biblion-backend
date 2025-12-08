@@ -17,9 +17,6 @@ public record BookUpdateRequest(
         @NotNull
         @PositiveOrZero
         Integer year,
-        @NotNull
-        @PositiveOrZero
-        Integer copiesToAdd,
         @NotEmpty
         List<String> genres
 ) {

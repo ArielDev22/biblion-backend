@@ -5,13 +5,9 @@ public record BookAdminDashboardResponse(
         String title,
         String isbn,
         String author,
-        Integer year,
-        String description,
         String type,
         String imageKey,
         String pdfKey,
-        Long pdfSize,
-        Integer copiesAvailable,
-        Integer copiesOnLoan
+        Long pdfSize
 ) {
 }

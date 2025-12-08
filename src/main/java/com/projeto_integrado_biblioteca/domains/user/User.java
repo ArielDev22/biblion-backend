@@ -1,6 +1,7 @@
 package com.projeto_integrado_biblioteca.domains.user;
 
 import com.projeto_integrado_biblioteca.domains.download.Download;
+import com.projeto_integrado_biblioteca.domains.library.Library;
 import com.projeto_integrado_biblioteca.domains.session.Session;
 import jakarta.persistence.*;
 import lombok.*;
@@ -46,6 +47,9 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Session> sessions = new ArrayList<>();
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private Library library;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

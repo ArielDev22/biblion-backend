@@ -57,14 +57,4 @@ public class Book {
             inverseJoinColumns = {@JoinColumn(name = "pdf_id", referencedColumnName = "id")}
     )
     private BookPdfFile pdfFile;
-
-    @Column(name = "copies_available")
-    private Integer copiesAvailable;
-
-    @Column(name = "copies_on_loan")
-    private Integer copiesOnLoan;
-
-    public void addCopies(int quantity) {
-        this.copiesAvailable += quantity;
-    }
 }

@@ -20,7 +20,6 @@ public record BookCreateRequest(
         @NotNull(message = "Insira o id de tipo de livro")
         Long bookTypeId,
         @NotEmpty(message = "Insira ao menos um gênero")
-        List<Long> genres,
-        Integer copiesAvailable
+        List<Long> genres
 ) {
 }

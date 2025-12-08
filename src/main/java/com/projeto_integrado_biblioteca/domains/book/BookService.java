@@ -50,8 +50,6 @@ public class BookService {
 
         Book book = bookMapper.createRequestToBook(request);
         book.setImageKey(imageKey);
-        book.setCopiesAvailable((bt.equals(BookType.LOAN)) ? request.copiesAvailable() : 0);
-        book.setCopiesOnLoan(0);
         book.setGenres(genres);
         book.setType(bt);
         book.setPdfFile(new BookPdfFile(null, generateFilename(request.title()), pdfKey, pdf.getSize(), null));
@@ -129,8 +127,6 @@ public class BookService {
         if (request.genres() != null) {
             bookToUpdate.setGenres(updateGenres(request.genres()));
         }
-
-        bookToUpdate.addCopies(request.copiesToAdd());
 
         bookRepository.save(bookToUpdate);
 
