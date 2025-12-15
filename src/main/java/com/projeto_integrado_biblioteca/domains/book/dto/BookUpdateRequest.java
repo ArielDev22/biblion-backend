@@ -13,11 +13,14 @@ public record BookUpdateRequest(
         @NotBlank
         String author,
         @NotBlank
+        String isbn,
+        @NotBlank
         String description,
         @NotNull
         @PositiveOrZero
         Integer year,
         @NotEmpty
-        List<String> genres
+        List<String> genres,
+        Long bookTypeId
 ) {
 }

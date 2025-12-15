@@ -1,17 +1,19 @@
 package com.projeto_integrado_biblioteca.domains.book.dto;
 
+import lombok.Data;
+
 import java.util.List;
 
-public record BookInfoResponse(
-        Long id,
-        String title,
-        String author,
-        String isbn,
-        Integer year,
-        String description,
-        String type,
-        List<String> genres,
-        BookFileInfo pdfInfo,
-        BookFileInfo imageInfo
-) {
+@Data
+public class BookInfoResponse{
+    private Long id;
+    private String title;
+    private String author;
+    private String isbn;
+    private Integer year;
+    private String description;
+    private String type;
+    private List<String> genres;
+    private BookFileInfo pdfInfo;
+    private BookFileInfo imageInfo;
 }

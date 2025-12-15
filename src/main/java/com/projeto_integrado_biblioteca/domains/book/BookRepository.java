@@ -1,5 +1,6 @@
 package com.projeto_integrado_biblioteca.domains.book;
 
+import com.projeto_integrado_biblioteca.domains.book.models.Book;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;

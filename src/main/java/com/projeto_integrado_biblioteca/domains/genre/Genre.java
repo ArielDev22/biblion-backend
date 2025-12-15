@@ -1,6 +1,6 @@
 package com.projeto_integrado_biblioteca.domains.genre;
 
-import com.projeto_integrado_biblioteca.domains.book.Book;
+import com.projeto_integrado_biblioteca.domains.book.models.Book;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

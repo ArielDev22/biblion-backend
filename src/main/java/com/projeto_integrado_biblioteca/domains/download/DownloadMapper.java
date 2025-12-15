@@ -8,8 +8,8 @@ public interface DownloadMapper {
 
     @Mapping(target = "bookId", source = "book.id")
     @Mapping(target = "bookTitle", source = "book.title")
-    @Mapping(target = "filename", source = "book.pdfFile.filename")
-    @Mapping(target = "size", source = "book.pdfFile.size")
+    @Mapping(target = "filename", source = "book.pdf.filename")
+    @Mapping(target = "size", source = "book.pdf.size")
     @Mapping(target = "imageURL", ignore = true)
     DownloadHistoricResponse toDownloadHistoric(Download download);
 }

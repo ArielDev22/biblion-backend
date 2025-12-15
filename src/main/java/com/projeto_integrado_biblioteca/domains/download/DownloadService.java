@@ -1,6 +1,6 @@
 package com.projeto_integrado_biblioteca.domains.download;
 
-import com.projeto_integrado_biblioteca.domains.book.Book;
+import com.projeto_integrado_biblioteca.domains.book.models.Book;
 import com.projeto_integrado_biblioteca.domains.book.BookService;
 import com.projeto_integrado_biblioteca.domains.storage.StorageService;
 import com.projeto_integrado_biblioteca.domains.user.User;
@@ -31,7 +31,7 @@ public class DownloadService {
         User user = userService.getUserByEmail(userDetails.getUsername());
         Book book = bookService.getBookById(bookId);
 
-        DownloadableFile file = storageService.getPdfForDownload(book.getPdfFile());
+        DownloadableFile file = storageService.getPdfForDownload(book.getPdf());
 
         var optDownload = downloadRepository.findByBookIdAndUserId(bookId, user.getId());
 
@@ -64,7 +64,7 @@ public class DownloadService {
 
         for (DownloadHistoricResponse d : downloadHistoric) {
             var download = userDownloads.get(d.getId());
-            d.setImageURL(storageService.getCoverURL(download.getBook().getImageKey()));
+            d.setImageURL(storageService.getCoverURL(download.getBook().getCover().getFileKey()));
         }
 
         return downloadHistoric;

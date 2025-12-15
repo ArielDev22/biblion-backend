@@ -1,7 +1,7 @@
 package com.projeto_integrado_biblioteca.domains.storage;
 
 import com.projeto_integrado_biblioteca.config.S3ConfigProps;
-import com.projeto_integrado_biblioteca.domains.book.BookPdfFile;
+import com.projeto_integrado_biblioteca.domains.book.models.BookFile;
 import com.projeto_integrado_biblioteca.domains.download.DownloadableFile;
 import com.projeto_integrado_biblioteca.exceptions.ResourceNotFoundException;
 import com.projeto_integrado_biblioteca.exceptions.StorageException;
@@ -111,11 +111,11 @@ public class StorageService {
         return key;
     }
 
-    public DownloadableFile getPdfForDownload(BookPdfFile pdfFile) {
+    public DownloadableFile getPdfForDownload(BookFile pdfFile) {
         GetObjectRequest objectRequest = GetObjectRequest
                 .builder()
                 .bucket(props.bucket())
-                .key(pdfFile.getPdfKey())
+                .key(pdfFile.getFileKey())
                 .build();
 
         try {

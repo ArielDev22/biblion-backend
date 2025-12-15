@@ -49,7 +49,7 @@ public class User implements UserDetails {
     private List<Session> sessions = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private Library library;
+    private Library library = new Library();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

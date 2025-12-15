@@ -1,6 +1,6 @@
 package com.projeto_integrado_biblioteca.domains.book.dto;
 
-import com.projeto_integrado_biblioteca.domains.book.BookType;
+import com.projeto_integrado_biblioteca.domains.book.models.BookType;
 import com.projeto_integrado_biblioteca.domains.genre.dtos.GenreResponse;
 import lombok.Data;
 

@@ -1,4 +1,4 @@
-package com.projeto_integrado_biblioteca.domains.book;
+package com.projeto_integrado_biblioteca.domains.book.models;
 
 import lombok.Getter;
 

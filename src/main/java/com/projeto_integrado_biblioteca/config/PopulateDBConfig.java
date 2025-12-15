@@ -1,22 +1,25 @@
 package com.projeto_integrado_biblioteca.config;
 
-import com.projeto_integrado_biblioteca.domains.book.Book;
+import com.projeto_integrado_biblioteca.domains.book.models.Book;
 import com.projeto_integrado_biblioteca.domains.book.BookRepository;
-import com.projeto_integrado_biblioteca.domains.book.BookType;
+import com.projeto_integrado_biblioteca.domains.book.models.BookFileCover;
+import com.projeto_integrado_biblioteca.domains.book.models.BookType;
 import com.projeto_integrado_biblioteca.domains.genre.Genre;
 import com.projeto_integrado_biblioteca.domains.genre.GenreRepository;
+import com.projeto_integrado_biblioteca.domains.library.Library;
 import com.projeto_integrado_biblioteca.domains.storage.StorageService;
+import com.projeto_integrado_biblioteca.domains.user.User;
+import com.projeto_integrado_biblioteca.domains.user.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -28,10 +31,25 @@ public class PopulateDBConfig {
     }
 
     @Bean
-    CommandLineRunner registerBooks(BookRepository bookRepository, GenreRepository genreRepository, StorageService storageService) {
+    CommandLineRunner registerBooks(
+            BookRepository bookRepository,
+            GenreRepository genreRepository,
+            StorageService storageService,
+            UserRepository userRepository
+    ) {
         return args -> {
             if (!isTablePopulated()) {
                 System.out.println("Preenchendo o banco de dados...");
+
+                User user1 = userRepository.findById(1L).get();
+                User user2 = userRepository.findById(2L).get();
+
+                user1.setLibrary(new Library());
+                user2.setLibrary(new Library());
+
+                userRepository.save(user1);
+                userRepository.save(user2);
+
 
                 List<Genre> savedGenres = genreRepository.saveAll(
                         List.of(
@@ -62,19 +80,35 @@ public class PopulateDBConfig {
                         new Book(null, "5647375698682", "O Sol Nasce Para Todos", "Harper Lee", null, 1960, BookType.FREE, Set.of(genreMap.get("Romance")), null, null)
                 );
 
-                for (Book b : books) {
+                List<Book> savedBooks = bookRepository.saveAll(books);
+
+                for (Book b : savedBooks) {
                     String imageFilename = b.getTitle().toLowerCase().replace(" ", "-") + ".jpg";
+                    String fullPath = imagesPath.concat(imageFilename);
 
-                    InputStream inputStream = getClass().getResourceAsStream(imagesPath.concat(imageFilename));
+                    try (InputStream inputStream = getClass().getResourceAsStream(fullPath)) {
+                        if (inputStream == null) {
+                            throw new RuntimeException("Imagem não encontrada: " + imageFilename);
+                        }
 
-                    if (inputStream == null) {
-                        throw new RuntimeException("Imagem não encontrada: " + imageFilename);
+                        byte[] imageBytes = inputStream.readAllBytes();
+
+                        long size = imageBytes.length;
+
+                        String key = storageService.uploadImageAsStream(new ByteArrayInputStream(imageBytes));
+
+                        BookFileCover cover = new BookFileCover(b);
+                        cover.setFileKey(key);
+                        cover.setFilename(imageFilename);
+                        cover.setSize(size);
+
+
+                        b.setCover(cover);
+                    } catch (IOException e) {
+                        throw new RuntimeException("Erro ao ler arquivo: " + imageFilename, e);
                     }
-
-                    b.setImageKey(storageService.uploadImageAsStream(inputStream));
                 }
-
-                bookRepository.saveAll(books);
+                bookRepository.saveAll(savedBooks);
             }
         };
     }

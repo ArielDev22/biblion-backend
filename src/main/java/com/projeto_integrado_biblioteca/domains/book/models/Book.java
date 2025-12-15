@@ -1,4 +1,4 @@
-package com.projeto_integrado_biblioteca.domains.book;
+package com.projeto_integrado_biblioteca.domains.book.models;
 
 import com.projeto_integrado_biblioteca.domains.genre.Genre;
 import jakarta.persistence.*;
@@ -32,6 +32,7 @@ public class Book {
     @Column(nullable = false)
     private String author;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
     private Integer year;
 
@@ -47,14 +48,9 @@ public class Book {
     )
     private Set<Genre> genres = new HashSet<>();
 
-    @Column(name = "image_key", nullable = false)
-    private String imageKey;
+    @OneToOne(mappedBy = "book", cascade = CascadeType.ALL)
+    private BookFilePDF pdf;
 
-    @OneToOne(cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "tb_books_pdfs",
-            joinColumns = {@JoinColumn(name = "book_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "pdf_id", referencedColumnName = "id")}
-    )
-    private BookPdfFile pdfFile;
+    @OneToOne(mappedBy = "book", cascade = CascadeType.ALL)
+    private BookFileCover cover;
 }

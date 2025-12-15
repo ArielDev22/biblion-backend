@@ -46,6 +46,13 @@ public class BookController {
         return ResponseEntity.ok(bookService.getBooksForAdminDashboard());
     }
 
+    @GetMapping(value = "/info/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<BookInfoResponse> getBookInfo(@PathVariable Long id) {
+        return ResponseEntity.ok(bookService.getBookInfoById(id));
+
+    }
+
     @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<BookUserHomeResponse>> search(@PathParam("q") String q) {
         return ResponseEntity.ok(bookService.search(q));

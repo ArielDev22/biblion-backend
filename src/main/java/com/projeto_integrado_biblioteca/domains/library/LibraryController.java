@@ -14,13 +14,12 @@ public class LibraryController {
     private final LibraryService libraryService;
 
 
-    @PostMapping("/{libraryId}/{bookId}")
-    public ResponseEntity<Void> addBook(
-            @PathVariable Long libraryId,
+    @PostMapping("/{userId}/{bookId}")
+    public ResponseEntity<String> addBook(
+            @PathVariable Long userId,
             @PathVariable Long bookId
     ) {
-        libraryService.addBook(libraryId, bookId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(libraryService.addBook(userId, bookId));
     }
 
 

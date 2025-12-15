@@ -1,6 +1,6 @@
 package com.projeto_integrado_biblioteca.domains.download;
 
-import com.projeto_integrado_biblioteca.domains.book.Book;
+import com.projeto_integrado_biblioteca.domains.book.models.Book;
 import com.projeto_integrado_biblioteca.domains.user.User;
 import jakarta.persistence.*;
 import lombok.*;
