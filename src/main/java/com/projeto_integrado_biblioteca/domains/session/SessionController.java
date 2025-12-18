@@ -1,10 +1,12 @@
 package com.projeto_integrado_biblioteca.domains.session;
 
+import com.projeto_integrado_biblioteca.domains.session.dto.BookSessionActive;
 import com.projeto_integrado_biblioteca.domains.session.dto.SessionStartRequest;
 import com.projeto_integrado_biblioteca.domains.session.dto.LastReadBookResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,6 +17,7 @@ public class SessionController {
 
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<Void> startSession(@RequestBody SessionStartRequest request) {
 
         sessionService.startSession(request);
@@ -22,14 +25,24 @@ public class SessionController {
     }
 
     @GetMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<LastReadBookResponse> getUserLastReadBook(
             @PathVariable Long userId
     ) {
         return ResponseEntity.ok(sessionService.getUserLastReadBook(userId));
     }
 
+    @GetMapping("/active")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    public ResponseEntity<BookSessionActive> getBookSessionActive(
+            @RequestParam Long bookId
+    ) {
+        return ResponseEntity.ok(sessionService.getBookSessionActive(bookId));
+    }
+
     @PatchMapping("/{sessionBookId}")
-    public ResponseEntity<Void> updateProgress(@PathVariable Long sessionBookId, @RequestParam Integer currentPage){
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    public ResponseEntity<Void> updateProgress(@PathVariable Long sessionBookId, @RequestParam Integer currentPage) {
         sessionService.updateProgress(sessionBookId, currentPage);
         return ResponseEntity.noContent().build();
     }

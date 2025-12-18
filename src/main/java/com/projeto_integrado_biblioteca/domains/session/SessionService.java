@@ -2,6 +2,7 @@ package com.projeto_integrado_biblioteca.domains.session;
 
 import com.projeto_integrado_biblioteca.domains.book.models.Book;
 import com.projeto_integrado_biblioteca.domains.book.BookService;
+import com.projeto_integrado_biblioteca.domains.session.dto.BookSessionActive;
 import com.projeto_integrado_biblioteca.domains.session.dto.LastReadBookResponse;
 import com.projeto_integrado_biblioteca.domains.session.dto.SessionStartRequest;
 import com.projeto_integrado_biblioteca.domains.user.User;
@@ -9,6 +10,8 @@ import com.projeto_integrado_biblioteca.domains.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +30,7 @@ public class SessionService {
             User user = userService.getUserById(request.userId());
 
             Session session = new Session();
-            SessionBook sessionBook = new SessionBook(request.totalPages(), book, session);
+            SessionBook sessionBook = new SessionBook(book.getPdf().getNumberOfPages(), book, session);
 
             session.setUser(user);
             session.setBook(sessionBook);
@@ -48,6 +51,12 @@ public class SessionService {
         readBookResponse.setImageURL(this.bookService.getImageURL(key));
 
         return readBookResponse;
+    }
+
+    public BookSessionActive getBookSessionActive(Long bookId) {
+        Optional<SessionBook> optSessionBook = this.sessionBookRepository.findByBookId(bookId);
+
+        return optSessionBook.map(sessionBook -> new BookSessionActive(sessionBook.getId())).orElse(null);
     }
 
     public void updateProgress(Long sessionBookId, Integer currentPage) {

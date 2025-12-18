@@ -57,7 +57,8 @@ public class PopulateDBConfig {
                                 new Genre(null, "Ação", new HashSet<>()),
                                 new Genre(null, "Fantasia", new HashSet<>()),
                                 new Genre(null, "Ficção", new HashSet<>()),
-                                new Genre(null, "Romance", new HashSet<>())
+                                new Genre(null, "Romance", new HashSet<>()),
+                                new Genre(null, "Autoajuda", new HashSet<>())
                         )
                 );
 

@@ -9,6 +9,7 @@ import com.projeto_integrado_biblioteca.domains.genre.GenreService;
 import com.projeto_integrado_biblioteca.exceptions.ConflictException;
 import com.projeto_integrado_biblioteca.exceptions.InvalidRequestException;
 import com.projeto_integrado_biblioteca.exceptions.ResourceNotFoundException;
+import com.projeto_integrado_biblioteca.utils.PdfUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,7 @@ public class BookService {
     private final GenreService genreService;
     private final StorageService storageService;
     private final BookMapper bookMapper;
+    private final PdfUtils pdfUtils;
 
     //endregion
 
@@ -57,6 +59,8 @@ public class BookService {
         String imageKey = this.storageService.uploadImage(fileImage);
 
         BookFilePDF pdf = this.buildBookPDF(pdfKey, request.title(), filePDF.getSize());
+        pdf.setNumberOfPages(this.pdfUtils.getNumberOfPages(filePDF));
+
         BookFileCover cover = this.buildBookCover(imageKey, request.title(), fileImage.getSize());
 
 
@@ -226,8 +230,13 @@ public class BookService {
     public void deleteBook(Long id) {
         Book book = getBookById(id);
 
-        this.storageService.deletePdf(book.getPdf().getFileKey());
-        this.storageService.deleteImage(book.getCover().getFileKey());
+        if (book.getPdf() != null){
+            this.storageService.deletePdf(book.getPdf().getFileKey());
+        }
+
+        if (book.getCover() != null){
+            this.storageService.deleteImage(book.getCover().getFileKey());
+        }
 
         this.bookRepository.delete(book);
     }

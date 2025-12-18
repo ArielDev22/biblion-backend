@@ -1,9 +1,6 @@
 package com.projeto_integrado_biblioteca.domains.book.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +13,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class BookFilePDF extends BookFile {
-
+    @Column(name = "number_of_pages")
+    private Integer numberOfPages;
 
     @OneToOne
     @JoinColumn(name = "book_id", referencedColumnName = "id")
